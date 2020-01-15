@@ -12,5 +12,8 @@
   "dependencies": {
     "@actions/core": "^1.1.0",
     "@actions/exec": "^1.0.0"
+  },
+  "devDependencies": {
+    "ncc": "^0.3.6"
   }
 }
