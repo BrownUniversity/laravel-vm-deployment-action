@@ -1,0 +1,36 @@
+name: Laravel VM-Based Deployment
+author: Christopher Keith
+description: "Execute steps for deploying a Laravel application to a VM"
+inputs:
+  user:
+    description: "Remote user for SCP/SSH"
+    required: true
+  host:
+    description: "Target host for deployment"
+    required: true
+  versionsRoot:
+    description: "Location on the VM where versions of the application are deployed"
+    required: true
+  version:
+    description: "Version of software being deployed"
+    required: false
+    default: ""
+  key:
+    description: "Location of key for SCP/SSH operations"
+    required: true
+  artisanCommands:
+    description: "Pipe-delimited list of Artisan commands to run as part of the deployment"
+    required: false
+    default: ""
+  artifact:
+    description: "Path to deployable artifact"
+    required: false
+    default: "artifact.tar.gz"
+  numberOfVersionsToKeep:
+    description: "Number of most recent versions to keep. (0 = all)"
+    required: false
+    default: "0"
+
+runs:
+  using: 'node12'
+  main: 'main.js'
