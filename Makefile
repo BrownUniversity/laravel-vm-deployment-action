@@ -1,6 +1,6 @@
 .phony: compile
 compile: install
-	docker-compose run --rm node node_modules/.bin/ncc build main.js
+	docker-compose run --rm node node_modules/.bin/ncc build index.js
 
 .phony: install
 install:
