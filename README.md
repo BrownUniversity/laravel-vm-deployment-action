@@ -57,3 +57,7 @@ with:
     artifact: "some-other-tarball.tar.gz"
     numberOfVersionsToKeep: 5
 ```
+
+## Publishing
+
+Be sure to run `make compile` and commit the changes to the resultant `dist/index.js` file prior to tagging a new release.
