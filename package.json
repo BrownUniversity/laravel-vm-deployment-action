@@ -4,6 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
+    "lint": "eslint index.js",
+    "format": "prettier --write .eslintrc package.json index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,6 +16,10 @@
     "@actions/exec": "^1.0.0"
   },
   "devDependencies": {
-    "@zeit/ncc": "^0.21.0"
+    "@zeit/ncc": "^0.21.0",
+    "eslint": "^6.8.0",
+    "eslint-config-brown": "git+https://github.com/BrownUniversity/eslint-config-brown.git#semver:^0.14",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1"
   }
 }
