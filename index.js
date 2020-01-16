@@ -15,7 +15,7 @@ function getOptions() {
     user: getRequiredInput("user"),
     host: getRequiredInput("host"),
     versionsRoot: getRequiredInput("versionsRoot"),
-    version: core.getInput("version") || process.env["GITHUB_SHA"] || "",
+    version: core.getInput("version") || process.env.GITHUB_SHA || "",
     key: getRequiredInput("key"),
     artisanCommands: core.getInput("artisanCommands").split("|"),
     artifact: core.getInput("artifact"),
@@ -35,7 +35,7 @@ async function executeSSH({ key, user, host }, command, execOptions = {}) {
   await executeCall(`ssh -i ${key} ${user}@${host} ${command}`, execOptions);
 }
 
-async function executeSCP({ key, user, host }, source, destination) {
+async function executeSCP({ key }, source, destination) {
   await executeCall(`scp -i ${key} ${source} ${destination}`);
 }
 
@@ -103,14 +103,10 @@ async function removeOldVersions(options) {
   }
 
   let output = "";
-  let error = "";
   const execOptions = {};
   execOptions.listeners = {
     stdout: data => {
       output += data.toString();
-    },
-    stderr: data => {
-      error += data.toString();
     }
   };
   await executeSSH(options, `ls -t ${versionsRoot}`, execOptions);
@@ -121,9 +117,12 @@ async function removeOldVersions(options) {
     return;
   }
   const dirsToRemove = rawDirs.slice(versionsToKeep);
-  for (dir of dirsToRemove) {
+  /* eslint-disable no-restricted-syntax */
+  for (const dir of dirsToRemove) {
+    // eslint-disable-next-line no-await-in-loop
     await executeSSH(options, `rm -fr ${versionsRoot}/${dir}`);
   }
+  /* eslint-enable no-restricted-syntax */
 }
 
 async function main() {
