@@ -119,7 +119,6 @@ async function removeOldVersions(options) {
   const dirsToRemove = rawDirs.slice(versionsToKeep);
   /* eslint-disable no-restricted-syntax */
   for (const dir of dirsToRemove) {
-    // eslint-disable-next-line no-await-in-loop
     await executeSSH(options, `rm -fr ${versionsRoot}/${dir}`);
   }
   /* eslint-enable no-restricted-syntax */
