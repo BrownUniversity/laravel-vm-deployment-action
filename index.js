@@ -1,12 +1,12 @@
-const core = require('@actions/core');
-const exec = require('@actions/exec');
+const core = require("@actions/core");
+const exec = require("@actions/exec");
 
 function getRequiredInput(input) {
   const capturedInput = core.getInput(input);
   if (capturedInput === null || capturedInput === "") {
     core.setFailed(`Action failed, unable to get required input: ${input}`);
   }
-  
+
   return capturedInput;
 }
 
@@ -15,7 +15,7 @@ function getOptions() {
     user: getRequiredInput("user"),
     host: getRequiredInput("host"),
     versionsRoot: getRequiredInput("versionsRoot"),
-    version: core.getInput("version") || process.env["GITHUB_SHA"] || '',
+    version: core.getInput("version") || process.env["GITHUB_SHA"] || "",
     key: getRequiredInput("key"),
     artisanCommands: core.getInput("artisanCommands").split("|"),
     artifact: core.getInput("artifact"),
@@ -36,7 +36,7 @@ async function executeSSH({ key, user, host }, command, execOptions = {}) {
 }
 
 async function executeSCP({ key, user, host }, source, destination) {
-  await executeCall(`scp -i ${key} ${source} ${destination}`)
+  await executeCall(`scp -i ${key} ${source} ${destination}`);
 }
 
 async function ensureTargetDirectoryExists(options) {
@@ -53,8 +53,11 @@ async function deployArtifact(options) {
 }
 
 async function explodeTarball(options) {
-  const { artifact, version, versionsRoot} = options;
-  await executeSSH(options, `tar -xzf ${versionsRoot}/${artifact} -C ${versionsRoot}/${version}`);
+  const { artifact, version, versionsRoot } = options;
+  await executeSSH(
+    options,
+    `tar -xzf ${versionsRoot}/${artifact} -C ${versionsRoot}/${version}`
+  );
 }
 
 async function removeArtifact(options) {
@@ -69,7 +72,7 @@ async function updateVersionDirectoryTimeStamp(options) {
 
 async function setTargetPermissions(options) {
   const { versionsRoot, version } = options;
-  const path = `${versionsRoot}/${version}`
+  const path = `${versionsRoot}/${version}`;
   await executeSSH(options, `chmod -R 770 ${path}`);
   await executeSSH(options, `chmod -R 775 ${path}/storage`);
 }
@@ -77,14 +80,20 @@ async function setTargetPermissions(options) {
 async function executeArtisan(options) {
   const { versionsRoot, version } = options;
   options.artisanCommands.forEach(async command => {
-    await executeSSH(options, `cd ${versionsRoot}/${version}; php artisan ${command}`);
+    await executeSSH(
+      options,
+      `cd ${versionsRoot}/${version}; php artisan ${command}`
+    );
   });
 }
 
 async function updateSymlink(options) {
   const { version, versionsRoot } = options;
   await executeSSH(options, `rm -f ${versionsRoot}/current`);
-  await executeSSH(options, `ln -s ${versionsRoot}/${version} ${versionsRoot}/current`);
+  await executeSSH(
+    options,
+    `ln -s ${versionsRoot}/${version} ${versionsRoot}/current`
+  );
 }
 
 async function removeOldVersions(options) {
@@ -92,27 +101,27 @@ async function removeOldVersions(options) {
   if (versionsToKeep === 0) {
     return;
   }
-  
+
   let output = "";
   let error = "";
   const execOptions = {};
   execOptions.listeners = {
-    stdout: (data) => {
+    stdout: data => {
       output += data.toString();
     },
-    stderr: (data) => {
+    stderr: data => {
       error += data.toString();
     }
   };
   await executeSSH(options, `ls -t ${versionsRoot}`, execOptions);
-  
+
   const rawDirs = output.split(/\s+/).filter(dir => dir !== "current");
   rawDirs.splice(-1, 1);
   if (rawDirs.length <= versionsToKeep) {
     return;
   }
   const dirsToRemove = rawDirs.slice(versionsToKeep);
-  for(dir of dirsToRemove) {
+  for (dir of dirsToRemove) {
     await executeSSH(options, `rm -fr ${versionsRoot}/${dir}`);
   }
 }
