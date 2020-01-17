@@ -1,7 +1,7 @@
 DOCKER_COMPOSE = docker-compose
 
 .phony: compile
-compile: install
+compile: npm-ci
 	${DOCKER_COMPOSE} run --rm node node_modules/.bin/ncc build index.js
 
 .phony: format
@@ -15,3 +15,7 @@ lint:
 .phony: install
 install:
 	${DOCKER_COMPOSE} run --rm node npm install
+
+.phony: npm-ci
+npm-ci:
+	${DOCKER_COMPOSE} run --rm node npm ci
