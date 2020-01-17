@@ -9,6 +9,6 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
       - name: Install node dependencies
-        run: npm install
+        run: npm ci
       - name: Eslint
         run: npm run lint
