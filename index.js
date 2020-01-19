@@ -79,12 +79,15 @@ async function setTargetPermissions(options) {
 
 async function executeArtisan(options) {
   const { versionsRoot, version } = options;
-  options.artisanCommands.forEach(async command => {
+  /* eslint-disable no-restricted-syntax */
+  for (const command of options.artisanCommands) {
+    // eslint-disable-next-line no-await-in-loop
     await executeSSH(
       options,
       `cd ${versionsRoot}/${version}; php artisan ${command}`
     );
-  });
+  }
+  /* eslint-enable no-restricted-syntax */
 }
 
 async function updateSymlink(options) {
