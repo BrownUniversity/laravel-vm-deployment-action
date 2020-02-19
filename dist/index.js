@@ -965,7 +965,8 @@ function getOptions() {
     key: getRequiredInput("key"),
     artisanCommands: core.getInput("artisanCommands").split("|"),
     artifact: core.getInput("artifact"),
-    versionsToKeep: core.getInput("numberOfVersionsToKeep") || 0
+    versionsToKeep: core.getInput("numberOfVersionsToKeep") || 0,
+    postDeploymentCommands: core.getInput("postDeploymentCommands").split("|")
   };
 }
 
@@ -1036,6 +1037,16 @@ async function executeArtisan(options) {
   /* eslint-enable no-restricted-syntax */
 }
 
+async function executePostDeploymentCommands(options) {
+  const { versionsRoot, version } = options;
+  /* eslint-disable no-restricted-syntax */
+  for (const command of options.postDeploymentCommands) {
+    // eslint-disable-next-line no-await-in-loop
+    await executeSSH(options, `cd ${versionsRoot}/${version}; ${command}`);
+  }
+  /* eslint-enable no-restricted-syntax */
+}
+
 async function updateSymlink(options) {
   const { version, versionsRoot } = options;
   await executeSSH(options, `rm -f ${versionsRoot}/current`);
@@ -1083,6 +1094,7 @@ async function main() {
   await updateVersionDirectoryTimeStamp(options);
   await setTargetPermissions(options);
   await executeArtisan(options);
+  await executePostDeploymentCommands(options);
   await updateSymlink(options);
   await removeOldVersions(options);
 }
