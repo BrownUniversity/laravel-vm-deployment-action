@@ -43,6 +43,11 @@ The number of versions to keep on the target VM.  The most recent number of conf
 All others will be removed.  The default behavior is to not remove anything.  This can also be achieved with 
 an explicit value of `"0"`
 
+### `postDeploymentCommands`
+
+A pipe-delimited list of commands to run after the deployment.  These will be run in the directory to which 
+the code was deployed.
+
 ## Example usage
 
 ```
@@ -54,6 +59,7 @@ with:
     version:"v1.0.0"
     key: "~/identityfile"
     artisanCommands: "config:cache|migrate"
+    postDeploymentCommands: "sudo supervisorctl restart foo-worker"
     artifact: "some-other-tarball.tar.gz"
     numberOfVersionsToKeep: 5
 ```
