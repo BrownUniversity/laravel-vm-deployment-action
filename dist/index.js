@@ -964,6 +964,7 @@ function getOptions() {
     version: core.getInput("version") || process.env.GITHUB_SHA || "",
     key: getRequiredInput("key"),
     artisanCommands: core.getInput("artisanCommands").split("|"),
+    writableDirectories: core.getInput("writableDirectories").split("|"),
     artifact: core.getInput("artifact"),
     versionsToKeep: core.getInput("numberOfVersionsToKeep") || 0
   };
@@ -1020,7 +1021,16 @@ async function setTargetPermissions(options) {
   const { versionsRoot, version } = options;
   const path = `${versionsRoot}/${version}`;
   await executeSSH(options, `chmod -R 770 ${path}`);
-  await executeSSH(options, `chmod -R 775 ${path}/storage`);
+  /* eslint-disable no-restricted-syntax */
+  for (const dir of options.writableDirectories) {
+    if (dir) {
+      // eslint-disable-next-line no-await-in-loop
+      await executeSSH(
+        options,
+        `stat ${path}/${dir} >/dev/null && chmod -R 775 ${path}/${dir}`
+      );
+    }
+  }
 }
 
 async function executeArtisan(options) {
