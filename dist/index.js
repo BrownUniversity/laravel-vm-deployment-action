@@ -956,6 +956,10 @@ function getRequiredInput(input) {
   return capturedInput;
 }
 
+function parseArrayFromPipeDelimitedString(pipeDelimitedString) {
+  return pipeDelimitedString.split("|").filter(x => x !== "");
+}
+
 function getOptions() {
   return {
     user: getRequiredInput("user"),
@@ -963,10 +967,14 @@ function getOptions() {
     versionsRoot: getRequiredInput("versionsRoot"),
     version: core.getInput("version") || process.env.GITHUB_SHA || "",
     key: getRequiredInput("key"),
-    artisanCommands: core.getInput("artisanCommands").split("|"),
+    artisanCommands: parseArrayFromPipeDelimitedString(
+      core.getInput("artisanCommands")
+    ),
     artifact: core.getInput("artifact"),
     versionsToKeep: core.getInput("numberOfVersionsToKeep") || 0,
-    postDeploymentCommands: core.getInput("postDeploymentCommands").split("|")
+    postDeploymentCommands: parseArrayFromPipeDelimitedString(
+      core.getInput("postDeploymentCommands")
+    )
   };
 }
 
