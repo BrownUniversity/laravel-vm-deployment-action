@@ -30,6 +30,10 @@ inputs:
     description: "Number of most recent versions to keep. (0 = all)"
     required: false
     default: "0"
+  postDeploymentCommands:
+    description: "Pipe-delimited list of commands to run as part of the deployment"
+    required: false
+    default: ""
 
 runs:
   using: 'node12'

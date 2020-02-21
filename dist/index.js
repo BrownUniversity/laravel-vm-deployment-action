@@ -956,6 +956,10 @@ function getRequiredInput(input) {
   return capturedInput;
 }
 
+function parseArrayFromPipeDelimitedString(pipeDelimitedString) {
+  return pipeDelimitedString.split("|").filter(x => x !== "");
+}
+
 function getOptions() {
   return {
     user: getRequiredInput("user"),
@@ -963,9 +967,14 @@ function getOptions() {
     versionsRoot: getRequiredInput("versionsRoot"),
     version: core.getInput("version") || process.env.GITHUB_SHA || "",
     key: getRequiredInput("key"),
-    artisanCommands: core.getInput("artisanCommands").split("|"),
+    artisanCommands: parseArrayFromPipeDelimitedString(
+      core.getInput("artisanCommands")
+    ),
     artifact: core.getInput("artifact"),
-    versionsToKeep: core.getInput("numberOfVersionsToKeep") || 0
+    versionsToKeep: core.getInput("numberOfVersionsToKeep") || 0,
+    postDeploymentCommands: parseArrayFromPipeDelimitedString(
+      core.getInput("postDeploymentCommands")
+    )
   };
 }
 
@@ -1036,6 +1045,16 @@ async function executeArtisan(options) {
   /* eslint-enable no-restricted-syntax */
 }
 
+async function executePostDeploymentCommands(options) {
+  const { versionsRoot, version } = options;
+  /* eslint-disable no-restricted-syntax */
+  for (const command of options.postDeploymentCommands) {
+    // eslint-disable-next-line no-await-in-loop
+    await executeSSH(options, `cd ${versionsRoot}/${version}; ${command}`);
+  }
+  /* eslint-enable no-restricted-syntax */
+}
+
 async function updateSymlink(options) {
   const { version, versionsRoot } = options;
   await executeSSH(options, `rm -f ${versionsRoot}/current`);
@@ -1083,6 +1102,7 @@ async function main() {
   await updateVersionDirectoryTimeStamp(options);
   await setTargetPermissions(options);
   await executeArtisan(options);
+  await executePostDeploymentCommands(options);
   await updateSymlink(options);
   await removeOldVersions(options);
 }
