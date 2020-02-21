@@ -82,11 +82,13 @@ async function executeArtisan(options) {
   const { versionsRoot, version } = options;
   /* eslint-disable no-restricted-syntax */
   for (const command of options.artisanCommands) {
-    // eslint-disable-next-line no-await-in-loop
-    await executeSSH(
-      options,
-      `cd ${versionsRoot}/${version}; php artisan ${command}`
-    );
+    if (command) {
+      // eslint-disable-next-line no-await-in-loop
+      await executeSSH(
+        options,
+        `cd ${versionsRoot}/${version}; php artisan ${command}`
+      );
+    }
   }
   /* eslint-enable no-restricted-syntax */
 }
@@ -95,8 +97,10 @@ async function executePostDeploymentCommands(options) {
   const { versionsRoot, version } = options;
   /* eslint-disable no-restricted-syntax */
   for (const command of options.postDeploymentCommands) {
-    // eslint-disable-next-line no-await-in-loop
-    await executeSSH(options, `cd ${versionsRoot}/${version}; ${command}`);
+    if (command) {
+      // eslint-disable-next-line no-await-in-loop
+      await executeSSH(options, `cd ${versionsRoot}/${version}; ${command}`);
+    }
   }
   /* eslint-enable no-restricted-syntax */
 }
