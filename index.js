@@ -94,6 +94,7 @@ async function setTargetPermissions(options) {
       `stat ${path}/${dir} >/dev/null && chmod -R 775 ${path}/${dir}`
     );
   }
+  /* eslint-enable no-restricted-syntax */
 }
 
 async function executeArtisan(options) {
