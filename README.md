@@ -33,6 +33,10 @@ The name of the version to deploy.  Default: sha value of the commit triggering 
 
 A pipe-delimited list of artisan commands to run after the deployment.  Example: `clear-compiled|migrate|optimize`
 
+### `writableDirectories`
+
+A pipe-delimited list of paths relative to the application root that need to be writable by the web server. Example: `storage` for Laravel, `application/cache|application/logs` for Kohana.
+
 ### `artifact`
 
 The path to the deployable tarball.  Default: `./artifact.tar.gz`
@@ -60,6 +64,7 @@ with:
     key: "~/identityfile"
     artisanCommands: "config:cache|migrate"
     postDeploymentCommands: "sudo supervisorctl restart foo-worker"
+    writableDirectories: "storage"
     artifact: "some-other-tarball.tar.gz"
     numberOfVersionsToKeep: 5
 ```
