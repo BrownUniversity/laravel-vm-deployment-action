@@ -970,7 +970,9 @@ function getOptions() {
     artisanCommands: parseArrayFromPipeDelimitedString(
       core.getInput("artisanCommands")
     ),
-    writableDirectories: core.getInput("writableDirectories").split("|"),
+    writableDirectories: parseArrayFromPipeDelimitedString(
+      core.getInput("writableDirectories")
+    ),
     artifact: core.getInput("artifact"),
     versionsToKeep: core.getInput("numberOfVersionsToKeep") || 0,
     postDeploymentCommands: parseArrayFromPipeDelimitedString(
@@ -1032,13 +1034,11 @@ async function setTargetPermissions(options) {
   await executeSSH(options, `chmod -R 770 ${path}`);
   /* eslint-disable no-restricted-syntax */
   for (const dir of options.writableDirectories) {
-    if (dir) {
-      // eslint-disable-next-line no-await-in-loop
-      await executeSSH(
-        options,
-        `stat ${path}/${dir} >/dev/null && chmod -R 775 ${path}/${dir}`
-      );
-    }
+    // eslint-disable-next-line no-await-in-loop
+    await executeSSH(
+      options,
+      `stat ${path}/${dir} >/dev/null && chmod -R 775 ${path}/${dir}`
+    );
   }
 }
 
