@@ -34,6 +34,10 @@ inputs:
     description: "Pipe-delimited list of commands to run as part of the deployment"
     required: false
     default: ""
+  writableDirectories:
+    description: "Pipe-delimited list of paths relative to the application root that need to be writable by the web server"
+    require: false
+    default: ""
 
 runs:
   using: 'node12'
