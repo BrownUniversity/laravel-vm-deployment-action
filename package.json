@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint index.js",
     "format": "prettier --write .eslintrc package.json index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "ncc build index.js"
   },
   "keywords": [],
   "author": "",
