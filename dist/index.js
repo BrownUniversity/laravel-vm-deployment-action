@@ -1271,11 +1271,16 @@ async function executeCall(call, options = {}) {
 }
 
 async function executeSSH({ key, user, host }, command, execOptions = {}) {
-  await executeCall(`ssh -i ${key} ${user}@${host} ${command}`, execOptions);
+  const verbose = core.isDebug() ? "-vvv" : "";
+  await executeCall(
+    `ssh ${verbose} -i ${key} ${user}@${host} ${command}`,
+    execOptions
+  );
 }
 
 async function executeSCP({ key }, source, destination) {
-  await executeCall(`scp -i ${key} ${source} ${destination}`);
+  const verbose = core.isDebug() ? "-vvv" : "";
+  await executeCall(`scp ${verbose} -i ${key} ${source} ${destination}`);
 }
 
 async function ensureTargetDirectoryExists(options) {
