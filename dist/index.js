@@ -1263,11 +1263,7 @@ function getOptions() {
 }
 
 async function executeCall(call, options = {}) {
-  try {
-    await exec.exec(call, [], options);
-  } catch (e) {
-    core.setFailed(`Action failed ${e}`);
-  }
+  await exec.exec(call, [], options);
 }
 
 async function executeSSH({ key, user, host }, command, execOptions = {}) {
@@ -1392,16 +1388,20 @@ async function removeOldVersions(options) {
 
 async function main() {
   const options = getOptions();
-  await ensureTargetDirectoryExists(options);
-  await deployArtifact(options);
-  await explodeTarball(options);
-  await removeArtifact(options);
-  await updateVersionDirectoryTimeStamp(options);
-  await setTargetPermissions(options);
-  await executeArtisan(options);
-  await executePostDeploymentCommands(options);
-  await updateSymlink(options);
-  await removeOldVersions(options);
+  try {
+    await ensureTargetDirectoryExists(options);
+    await deployArtifact(options);
+    await explodeTarball(options);
+    await removeArtifact(options);
+    await updateVersionDirectoryTimeStamp(options);
+    await setTargetPermissions(options);
+    await executeArtisan(options);
+    await executePostDeploymentCommands(options);
+    await updateSymlink(options);
+    await removeOldVersions(options);
+  } catch (e) {
+    core.setFailed(`Action failed ${e}`);
+  }
 }
 
 main();
