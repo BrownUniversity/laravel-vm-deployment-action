@@ -51,7 +51,7 @@ the code was deployed.
 ## Example usage
 
 ```
-uses: brownuniversity/laravel-vm-deployment-action@v1
+uses: brownuniversity/laravel-vm-deployment-action@v3
 with:
     user: "cibot"
     host: "appserver.services.brown.edu"
