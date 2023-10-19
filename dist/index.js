@@ -27129,7 +27129,6 @@ function getOptions() {
     host: getRequiredInput("host"),
     versionsRoot: getRequiredInput("versionsRoot"),
     version: core.getInput("version") || process.env.GITHUB_SHA || "",
-    key: getRequiredInput("key"),
     artisanCommands: parseArrayFromPipeDelimitedString(
       core.getInput("artisanCommands")
     ),
@@ -27152,17 +27151,14 @@ async function executeCall(call, options = {}) {
   }
 }
 
-async function executeSSH({ key, user, host }, command, execOptions = {}) {
+async function executeSSH({ user, host }, command, execOptions = {}) {
   const verbose = core.isDebug() ? "-vvv" : "";
-  await executeCall(
-    `ssh ${verbose} -i ${key} ${user}@${host} ${command}`,
-    execOptions
-  );
+  await executeCall(`ssh ${verbose} ${user}@${host} ${command}`, execOptions);
 }
 
-async function executeSCP({ key }, source, destination) {
+async function executeSCP(source, destination) {
   const verbose = core.isDebug() ? "-vvv" : "";
-  await executeCall(`scp ${verbose} -i ${key} ${source} ${destination}`);
+  await executeCall(`scp ${verbose} ${source} ${destination}`);
 }
 
 async function ensureTargetDirectoryExists(options) {
@@ -27175,7 +27171,7 @@ async function deployArtifact(options) {
   const { artifact, user, host, versionsRoot } = options;
   const source = artifact;
   const destination = `${user}@${host}:${versionsRoot}`;
-  await executeSCP(options, source, destination);
+  await executeSCP(source, destination);
 }
 
 async function explodeTarball(options) {

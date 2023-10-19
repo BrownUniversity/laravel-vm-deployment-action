@@ -15,9 +15,6 @@ inputs:
     description: "Version of software being deployed"
     required: false
     default: ""
-  key:
-    description: "Location of key for SCP/SSH operations"
-    required: true
   artisanCommands:
     description: "Pipe-delimited list of Artisan commands to run as part of the deployment"
     required: false
