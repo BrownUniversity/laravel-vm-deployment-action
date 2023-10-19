@@ -25,10 +25,6 @@ the versions root on the VM and the application configured to redirect all stora
 
 The name of the version to deploy.  Default: sha value of the commit triggering the workflow.
 
-### `key`
-
-**Required** The path to the identity file on the on-prem runner used for ssh/scp operations.
-
 ### `artisanCommands`
 
 A pipe-delimited list of artisan commands to run after the deployment.  Example: `clear-compiled|migrate|optimize`
@@ -61,7 +57,6 @@ with:
     host: "appserver.services.brown.edu"
     versionsRoot: "/www/vhosts/appserver.services.brown.edu/versions"
     version:"v1.0.0"
-    key: "~/identityfile"
     artisanCommands: "config:cache|migrate"
     postDeploymentCommands: "sudo supervisorctl restart foo-worker"
     writableDirectories: "storage"
